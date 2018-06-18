@@ -247,9 +247,6 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     // MARK: - Fetching
     
     fileprivate func startFetchingAssets() {
-        guard let fetchOptions = self.config?.assetFetchOptions() else {
-            return
-        }
         if !self.showCameraButton {
             self.emptyView = AlbumEmptyView(state: .loading)
         }
@@ -257,7 +254,7 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
             guard let strongSelf = self else {
                 return
             }
-            let result = PHAsset.fetchAssets(in: strongSelf.album, options: fetchOptions)
+            let result = PHAsset.fetchAssets(in: strongSelf.album, options: strongSelf.config?.assetFetchOptions())
             var allAssets = [PHAsset]()
             result.enumerateObjects({ (asset, _, _) in
                 allAssets.append(asset)

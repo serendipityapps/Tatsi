@@ -148,6 +148,9 @@ public struct TatsiConfig {
         }
         
         if self.showEmptyAlbums == false {
+			guard let fetchoptions = self.assetFetchOptions() else {
+				return false
+			}
             // If we don't allow empty albums, we hide the albums that have less than 1 asset.
             guard !assetCollection.isEmpty(for: self.assetFetchOptions()) else {
                 return false

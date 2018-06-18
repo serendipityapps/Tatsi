@@ -15,7 +15,7 @@ final internal class AlbumsTableHeaderView: UITableViewHeaderFooterView {
     }
 
     class private var font: UIFont {
-        return UIFont.preferredFont(forTextStyle: .title3)
+        return UIFont.preferredFont(forTextStyle: .headline)
     }
     
     static internal var height: CGFloat {
@@ -25,7 +25,7 @@ final internal class AlbumsTableHeaderView: UITableViewHeaderFooterView {
     lazy private var label: UILabel = {
         let label = UILabel()
         label.font = AlbumsTableHeaderView.font
-        label.textColor = .gray
+        label.textColor = UIColor.darkText
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
