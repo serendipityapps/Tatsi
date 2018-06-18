@@ -53,18 +53,22 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
+
+	lazy var iconView: SelectionIconView = {
+		let iconView = SelectionIconView()
+		return iconView
+	}()
+
     lazy private var selectedOverlay: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = true
-        view.backgroundColor = UIColor.white.withAlphaComponent(0.4)
+        view.alpha = 1.0
+        view.backgroundColor = UIColor.clear
         
-        let iconView = SelectionIconView()
         iconView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(iconView)
-        view.bottomAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 3).isActive = true
-        view.trailingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 3).isActive = true
+        view.bottomAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 5).isActive = true
+        view.leadingAnchor.constraint(equalTo: iconView.leadingAnchor, constant: -5).isActive = true
         
         return view
     }()
@@ -89,6 +93,8 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
         self.isAccessibilityElement = true
         
         self.setupConstraints()
+
+		setSelected(selected: false, animated: false)
     }
     
     private func setupConstraints() {
@@ -164,10 +170,29 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
-    override var isSelected: Bool {
-        didSet {
-            self.selectedOverlay.isHidden = !self.isSelected
-        }
-    }
+
+	func setSelected(selected: Bool, animated: Bool) {
+
+		switch (selected, animated) {
+		case (true, true):
+			UIView.animate(withDuration: 0.25, animations: {
+				self.iconView.transform = CGAffineTransform.identity
+			}, completion: { (_) in
+
+			})
+
+		case (true, false):
+			iconView.transform = CGAffineTransform.identity
+		case (false, true):
+
+			UIView.animate(withDuration: 0.25, animations: {
+				self.iconView.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+			}, completion: { (_) in
+				self.iconView.transform = CGAffineTransform(scaleX: 0, y: 0)
+			})
+
+		case (false, false):
+			iconView.transform = CGAffineTransform(scaleX: 0, y: 0)
+		}
+	}
 }

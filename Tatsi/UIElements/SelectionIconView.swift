@@ -9,7 +9,9 @@
 import UIKit
 
 final internal class SelectionIconView: UIView {
-    
+
+	static let size = CGSize(width: 24, height: 24)
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -27,7 +29,7 @@ final internal class SelectionIconView: UIView {
     }
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: 24, height: 24)
+        return SelectionIconView.size
     }
     
     private func drawIcon() {
@@ -41,7 +43,7 @@ final internal class SelectionIconView: UIView {
         let outline = UIColor(red: 1.000, green: 1.000, blue: 1.000, alpha: 1.000)
         
         //// Background Drawing
-        let backgroundPath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let backgroundPath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: SelectionIconView.size.width, height: SelectionIconView.size.height))
         context.saveGState()
         context.setShadow(offset: CGSize(), blur: 5, color: shadowTint.cgColor)
         outline.setFill()
@@ -49,7 +51,7 @@ final internal class SelectionIconView: UIView {
         context.restoreGState()
         
         //// Fill Drawing
-        let fillPath = UIBezierPath(ovalIn: CGRect(x: 1, y: 1, width: 22, height: 22))
+        let fillPath = UIBezierPath(ovalIn: CGRect(x: 1, y: 1, width: SelectionIconView.size.width-2, height: SelectionIconView.size.height-2))
         self.tintColor.setFill()
         fillPath.fill()
         

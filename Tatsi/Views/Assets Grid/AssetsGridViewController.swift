@@ -391,6 +391,7 @@ extension AssetsGridViewController {
                     return
                 }
                 self.selectedAssets.append(asset)
+				(collectionView.cellForItem(at: indexPath) as? AssetCollectionViewCell)?.setSelected(selected: true, animated: true)
                 if let maxSelection = self.config?.maxNumberOfSelections, maxSelection == 1 {
                     self.finishPicking(with: self.selectedAssets)
                 }
@@ -409,6 +410,7 @@ extension AssetsGridViewController {
             return
         }
         self.selectedAssets.remove(at: index)
+		(collectionView.cellForItem(at: indexPath) as? AssetCollectionViewCell)?.setSelected(selected: false, animated: true)
     }
     
 }
