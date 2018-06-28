@@ -200,7 +200,6 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
         
         animator.addAnimations {
             self.navigationItem.leftBarButtonItem?.isEnabled = false
-            self.navigationItem.rightBarButtonItem?.isEnabled = false
             albumsViewController.view.frame = self.view.bounds
         }
     }
@@ -243,9 +242,9 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     
     fileprivate func reloadDoneButtonState() {
 		if self.selectedAssets.isEmpty {
-			self.navigationItem.rightBarButtonItem = doneButton
-		} else {
 			self.navigationItem.rightBarButtonItem = cancelButton
+		} else {
+			self.navigationItem.rightBarButtonItem = doneButton
 		}
     }
     
