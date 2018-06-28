@@ -95,6 +95,14 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
         buttonitem.accessibilityIdentifier = "tatsi.button.done"
         return buttonitem
     }()
+
+	lazy fileprivate var cancelButton: UIBarButtonItem = {
+		let cancelButtonItem = self.pickerViewController?.customCancelButtonItem() ?? UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
+		cancelButtonItem.target = self
+		cancelButtonItem.action = #selector(cancel(_:))
+		cancelButtonItem.accessibilityIdentifier = "tatsi.button.cancel"
+		return cancelButtonItem
+	}()
     
     // MARK: - Initializers
     
@@ -123,21 +131,14 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
         
         self.collectionView?.allowsMultipleSelection = true
         
-        self.navigationItem.rightBarButtonItem = self.doneButton
+        self.navigationItem.rightBarButtonItem = self.cancelButton
         
         NotificationCenter.default.addObserver(self, selector: #selector(AssetsGridViewController.applicationDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let isRootModalViewController = self.navigationController?.viewControllers.first == self && self.presentingViewController != nil
-        
-        let cancelButtonItem = self.pickerViewController?.customCancelButtonItem() ?? UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
-        cancelButtonItem.target = self
-        cancelButtonItem.action = #selector(cancel(_:))
-        cancelButtonItem.accessibilityIdentifier = "tatsi.button.cancel"
-        
-        self.navigationItem.leftBarButtonItem = isRootModalViewController ? cancelButtonItem : nil
+
     }
     
     // MARK: - Actions
@@ -241,7 +242,11 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     // MARK: - Button state
     
     fileprivate func reloadDoneButtonState() {
-        self.doneButton.isEnabled = !self.selectedAssets.isEmpty
+		if self.selectedAssets.isEmpty {
+			self.navigationItem.rightBarButtonItem = doneButton
+		} else {
+			self.navigationItem.rightBarButtonItem = cancelButton
+		}
     }
     
     // MARK: - Fetching
