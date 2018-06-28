@@ -109,7 +109,7 @@ public struct TatsiConfig {
     
     /// Creates and returns the fetch options to use for fetching assets based on the config. Nil if the fetchOptions are not needed.
     internal func assetFetchOptions() -> PHFetchOptions? {
-        guard self.supportedMediaSubTypes != nil && (self.supportedMediaTypes.contains(.image) || self.supportedMediaTypes.contains(.video)) else {
+		guard (self.supportedMediaTypes.contains(.image) && self.supportedMediaTypes.contains(.video)) == false && self.supportedMediaSubTypes == nil else {
             return nil
         }
         let fetchOptions = PHFetchOptions()
