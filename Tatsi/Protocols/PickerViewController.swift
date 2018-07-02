@@ -39,6 +39,7 @@ extension PickerViewController where Self: UIViewController {
         guard let viewController = self.pickerViewController else {
             return
         }
+		config?.donePressedFeedBack?()
         self.delegate?.pickerViewController(viewController, didPickAssets: assets)
     }
     
@@ -46,6 +47,7 @@ extension PickerViewController where Self: UIViewController {
         guard let viewController = self.pickerViewController else {
             return
         }
+		config?.cancelPressedFeedBack?()
         self.delegate?.pickerViewControllerDidCancel(viewController)
     }
     

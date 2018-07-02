@@ -67,7 +67,12 @@ public struct TatsiConfig {
     
     /// If the order of photos in the user library (all photos/camera roll) should be inverted.
     public var invertUserLibraryOrder: Bool = false
-    
+
+	public var cancelPressedFeedBack: (() -> Void)?
+	public var donePressedFeedBack: (() -> Void)?
+	public var selectedAssetFeedBack: (() -> Void)?
+	public var deselectedAssetFeedBack: (() -> Void)?
+
     // MARK: - Internal features
     
     /// All the PHAssetCollectionSubtypes that should not be shown to the user. Based on the current config
