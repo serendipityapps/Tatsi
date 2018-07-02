@@ -129,7 +129,8 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         
         self.imageView.image = nil
-        
+		self.setSelected(selected: false, animated: false)
+
         if let currentRequest = self.currentRequest {
             let imageManager = self.imageManager ?? PHImageManager.default()
             imageManager.cancelImageRequest(currentRequest)

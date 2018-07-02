@@ -370,6 +370,11 @@ extension AssetsGridViewController {
         cell.imageManager = self.thumbnailCachingManager
         cell.asset = asset
         cell.reloadContents()
+		if self.selectedAssets.contains(asset) {
+			cell.setSelected(selected: true, animated: false)
+		} else {
+			cell.setSelected(selected: false, animated: false)
+		}
         return cell
     }
     
