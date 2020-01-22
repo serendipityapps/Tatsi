@@ -121,13 +121,13 @@ public struct TatsiConfig {
         
         var predicates = [NSPredicate]()
         
-        let mediaTypePredicates = self.supportedMediaTypes.flatMap({ (mediaType) -> NSPredicate? in
+        let mediaTypePredicates = self.supportedMediaTypes.compactMap({ (mediaType) -> NSPredicate? in
             return NSPredicate(format: "(mediaType == %ld)", mediaType.rawValue)
         })
         predicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: mediaTypePredicates))
         
         if let mediaSubtypes = self.supportedMediaSubTypes {
-            let mediaSubtypePredicates = mediaSubtypes.flatMap({ (mediaSubtype) -> NSPredicate? in
+            let mediaSubtypePredicates = mediaSubtypes.compactMap({ (mediaSubtype) -> NSPredicate? in
                 return NSPredicate(format: "mediaSubtype == %d", mediaSubtype.rawValue)
             })
             predicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: mediaSubtypePredicates))
@@ -157,7 +157,7 @@ public struct TatsiConfig {
 				return false
 			}
             // If we don't allow empty albums, we hide the albums that have less than 1 asset.
-            guard !assetCollection.isEmpty(for: self.assetFetchOptions()) else {
+            guard !assetCollection.isEmpty(for: fetchoptions) else {
                 return false
             }
         }

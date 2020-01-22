@@ -89,7 +89,7 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(self.selectedOverlay)
         
         self.accessibilityIdentifier = "tatsi.cell.asset"
-        self.accessibilityTraits = UIAccessibilityTraitImage
+        self.accessibilityTraits = UIAccessibilityTraits.image
         self.isAccessibilityElement = true
         
         self.setupConstraints()
@@ -149,7 +149,7 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
         requestOptions.resizeMode = PHImageRequestOptionsResizeMode.fast
         requestOptions.isSynchronous = false
         
-        self.imageView.contentMode = UIViewContentMode.center
+        self.imageView.contentMode = UIView.ContentMode.center
         self.imageView.image = nil
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             autoreleasepool {
@@ -163,7 +163,7 @@ final internal class AssetCollectionViewCell: UICollectionViewCell {
                             guard let image = image, self?.asset?.localIdentifier == asset.localIdentifier else {
                                 return
                             }
-                            self?.imageView.contentMode = UIViewContentMode.scaleAspectFill
+                            self?.imageView.contentMode = UIView.ContentMode.scaleAspectFill
                             self?.imageView.image = image
                         }
                     }

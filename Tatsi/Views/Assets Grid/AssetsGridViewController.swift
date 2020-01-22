@@ -35,7 +35,7 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     // MARK: - Private Properties
     
     fileprivate var showCameraButton: Bool {
-        guard self.album.isUserLibrary, UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) else {
+        guard self.album.isUserLibrary, UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) else {
             return false
         }
         return self.config?.showCameraOption ?? false
@@ -77,8 +77,8 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
                         self.scrollToEnd()
                     }
                     for selectedAsset in self.selectedAssets {
-                        if let index = self.assets?.index(of: selectedAsset) {
-                            collectionView.selectItem(at: IndexPath(item: index + (self.showCameraButton ? 1 : 0), section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
+                        if let index = self.assets?.firstIndex(of: selectedAsset) {
+                            collectionView.selectItem(at: IndexPath(item: index + (self.showCameraButton ? 1 : 0), section: 0), animated: false, scrollPosition: UICollectionView.ScrollPosition())
                         }
                     }
                     self.emptyView = collectionView.numberOfItems(inSection: 0) <= 0  ? AlbumEmptyView() : nil
@@ -133,7 +133,7 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
         
         self.navigationItem.rightBarButtonItem = self.cancelButton
         
-        NotificationCenter.default.addObserver(self, selector: #selector(AssetsGridViewController.applicationDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AssetsGridViewController.applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -178,13 +178,13 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     // MARK: - Albums list management
     
     fileprivate func showAlbumsViews(animator: UIViewPropertyAnimator) {
-        guard self.childViewControllers.isEmpty else {
+        guard self.children.isEmpty else {
             return
         }
         let albumsViewController = AlbumsViewController()
         albumsViewController.delegate = self
 
-        self.addChildViewController(albumsViewController)
+        self.addChild(albumsViewController)
         var frame = self.view.bounds
         frame.origin.y -= frame.height
         albumsViewController.view.frame = frame
@@ -196,7 +196,7 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
             albumsViewController.tableView.scrollIndicatorInsets = self.collectionView?.contentInset ?? UIEdgeInsets()
         }
         self.view.addSubview(albumsViewController.view)
-        albumsViewController.didMove(toParentViewController: self)
+        albumsViewController.didMove(toParent: self)
         
         animator.addAnimations {
             self.navigationItem.leftBarButtonItem?.isEnabled = false
@@ -205,7 +205,7 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
     }
     
     fileprivate func hideAlbumsViews(animator: UIViewPropertyAnimator) {
-        guard let albumsViewController = self.childViewControllers.first as? AlbumsViewController else {
+        guard let albumsViewController = self.children.first as? AlbumsViewController else {
             return
         }
         animator.addAnimations {
@@ -217,9 +217,9 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
             albumsViewController.view.frame = frame
         }
         animator.addCompletion { (_) in
-            albumsViewController.removeFromParentViewController()
+            albumsViewController.removeFromParent()
             albumsViewController.view.removeFromSuperview()
-            albumsViewController.didMove(toParentViewController: nil)
+            albumsViewController.didMove(toParent: nil)
         }
     }
     
@@ -254,11 +254,14 @@ final internal class AssetsGridViewController: UICollectionViewController, Picke
         if !self.showCameraButton {
             self.emptyView = AlbumEmptyView(state: .loading)
         }
+        
+        let options = config?.assetFetchOptions()
+        
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let strongSelf = self else {
                 return
             }
-            let result = PHAsset.fetchAssets(in: strongSelf.album, options: strongSelf.config?.assetFetchOptions())
+            let result = PHAsset.fetchAssets(in: strongSelf.album, options: options)
             var allAssets = [PHAsset]()
             result.enumerateObjects({ (asset, _, _) in
                 allAssets.append(asset)
@@ -386,7 +389,7 @@ extension AssetsGridViewController {
 
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         guard self.selectedAssets.count < self.config?.maxNumberOfSelections ?? Int.max else {
-            UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, LocalizableStrings.accessibilityAlertSelectionLimitReached)
+            UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: LocalizableStrings.accessibilityAlertSelectionLimitReached)
             return false
         }
         return true
@@ -396,7 +399,7 @@ extension AssetsGridViewController {
         if let asset = self.asset(for: indexPath) {
             if !self.selectedAssets.contains(asset) {
                 guard self.selectedAssets.count < self.config?.maxNumberOfSelections ?? Int.max else {
-                    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, LocalizableStrings.accessibilityAlertSelectionLimitReached)
+                    UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: LocalizableStrings.accessibilityAlertSelectionLimitReached)
                     return
                 }
                 self.selectedAssets.append(asset)
@@ -408,7 +411,7 @@ extension AssetsGridViewController {
             }
         } else {
             let cameraController = UIImagePickerController()
-            cameraController.sourceType = UIImagePickerControllerSourceType.camera
+            cameraController.sourceType = UIImagePickerController.SourceType.camera
             cameraController.delegate = self
             self.present(cameraController, animated: true, completion: nil)
             collectionView.deselectItem(at: indexPath, animated: true)
@@ -416,7 +419,7 @@ extension AssetsGridViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let asset = self.asset(for: indexPath), let index = self.selectedAssets.index(of: asset) else {
+        guard let asset = self.asset(for: indexPath), let index = self.selectedAssets.firstIndex(of: asset) else {
             return
         }
         self.selectedAssets.remove(at: index)

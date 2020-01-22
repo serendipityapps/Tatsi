@@ -47,13 +47,13 @@ final internal class AlbumsViewController: UITableViewController, PickerViewCont
             PHAssetCollectionSubtype.smartAlbumScreenshots,
             PHAssetCollectionSubtype.smartAlbumAllHidden
         ]
-        if #available(iOS 10.3, *), let index = smartAlbumSortingOrder.index(of: .smartAlbumPanoramas) {
+        if #available(iOS 10.3, *), let index = smartAlbumSortingOrder.firstIndex(of: .smartAlbumPanoramas) {
             smartAlbumSortingOrder.insert(.smartAlbumLivePhotos, at: index)
         }
-        if #available(iOS 10.2, *), let index = smartAlbumSortingOrder.index(of: .smartAlbumBursts) {
+        if #available(iOS 10.2, *), let index = smartAlbumSortingOrder.firstIndex(of: .smartAlbumBursts) {
             smartAlbumSortingOrder.insert(.smartAlbumDepthEffect, at: index)
         }
-        if #available(iOS 11, *), let index = smartAlbumSortingOrder.index(of: .smartAlbumAllHidden) {
+        if #available(iOS 11, *), let index = smartAlbumSortingOrder.firstIndex(of: .smartAlbumAllHidden) {
             smartAlbumSortingOrder.insert(.smartAlbumAnimated, at: index)
         }
         return smartAlbumSortingOrder
@@ -64,7 +64,7 @@ final internal class AlbumsViewController: UITableViewController, PickerViewCont
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        let cancelButtonItem = self.pickerViewController?.customCancelButtonItem() ?? UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(AlbumsViewController.cancel(_:)))
+        let cancelButtonItem = self.pickerViewController?.customCancelButtonItem() ?? UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.cancel, target: self, action: #selector(AlbumsViewController.cancel(_:)))
         cancelButtonItem.target = self
         cancelButtonItem.action = #selector(cancel(_:))
         cancelButtonItem.accessibilityIdentifier = "tatsi.button.cancel"
@@ -110,7 +110,7 @@ final internal class AlbumsViewController: UITableViewController, PickerViewCont
             smartAlbums.append(collection)
         })
         smartAlbums.sort { (collection1, collection2) -> Bool in
-            guard let index1 = self.smartAlbumSortingOrder.index(of: collection1.assetCollectionSubtype), let index2 = self.smartAlbumSortingOrder.index(of: collection2.assetCollectionSubtype) else {
+            guard let index1 = self.smartAlbumSortingOrder.firstIndex(of: collection1.assetCollectionSubtype), let index2 = self.smartAlbumSortingOrder.firstIndex(of: collection2.assetCollectionSubtype) else {
                 return true
             }
             return index1 < index2
